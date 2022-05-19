@@ -1,12 +1,17 @@
+### Get main info
 GET http://localhost:3001/info
 Accept: text/html
 
-###
+### Get all people
 GET http://localhost:3001/api/persons
 Accept: application/json
 
+### individual API person route
+GET http://localhost:3001/api/persons/62862f9452e769e19dce37ec
+Accept: application/json
+
 ###
-GET http://localhost:3001/api/persons/1
+GET http://localhost:3001/api/persons/6285c19851611b9322812b
 Accept: application/json
 
 ###
@@ -14,11 +19,11 @@ GET http://localhost:3001/api/persons/99
 Accept: application/json
 
 ###
-DELETE  http://localhost:3001/api/persons/3
+DELETE  http://localhost:3001/api/persons/628626d36704fdd3e402832f
 Accept: application/json
 
 ###
-DELETE  http://localhost:3001/api/persons/200
+DELETE  http://localhost:3001/api/persons/812bdf
 Accept: application/json
 
 ###
@@ -28,7 +33,6 @@ Content-Type: application/json
 {}
 
 ###
-
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
@@ -38,3 +42,18 @@ Content-Type: application/json
 }
 
 ###
+PUT http://localhost:3001/api/persons/628626af2d999bb90284a4c6
+Content-Type: application/json
+
+{
+  "name": "Paul4",
+  "number": 12415
+}
+
+###
+PUT http://localhost:3001/api/persons/628626af2d999bb90284a4c6
+Content-Type: application/json
+
+{
+  "name": "Paul17"
+}

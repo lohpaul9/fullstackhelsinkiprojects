@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import AddPersonForm from './components/AddPersonForm'
 import PhonebookTable from './components/PhonebookTable'
 import FilterForm from './components/FilterForm'
-import axios from 'axios'
 import personService from './services/persons'
 import Notification from "./components/Notification";
 
@@ -42,8 +41,24 @@ const App = () => {
         () => {
             personService
                 .create(newPerson)
-            displayNotif(newPerson.name + ' added to phonebook', false)
-            setPersons(persons.concat(newPerson))
+                .then(dbPerson => {
+                    displayNotif(dbPerson.name + ' added to phonebook', false)
+                    //in actuality this should be refreshed - every change to persons should also
+                    //call the server - is this slow? it might be, but I don't know a better workaround
+
+                    personService.getAll()
+                        .then(refreshedPeople => {
+                            setPersons(refreshedPeople)
+                        })
+                        .catch(error => {
+                            console.log(error, 'manually adding people offline')
+                            setPersons(persons.concat(dbPerson))
+                        })
+                })
+                .catch(error => {
+                    displayNotif(newPerson.name + ' already in phonebook', true)
+                })
+
         }
     )
   }
@@ -51,21 +66,27 @@ const App = () => {
   const updatePerson = (newPerson) => {
       personService
           .update(newPerson, newPerson.id)
-          .then(() => setPersons(persons.map(person => person.id === newPerson.id ? newPerson : person)))
+          //this should technically also sync to the new persons -> lessons learnt when re-buffering
+          .then(() => {
+              personService.getAll()
+                  .then(refreshedPeople => {
+                      setPersons(refreshedPeople)
+                  })
+                  .catch(error => {
+                      console.log(error, 'manually adding people offline')
+                      setPersons(persons.concat(newPerson))
+                  })
+          })
           .catch(error => {
               displayNotif(newPerson.name + ' not in database', true)
-              setPersons(persons.filter(person => person.id !== newPerson.id))
+              // setPersons(persons.filter(person => person.id !== newPerson.id))
           })
   }
 
   const delUser = id => {
       personService
           .delObj(id)
-          .then(() => personService
-              .getAll()
-              .then(response => {
-                  setPersons(response)
-              }))
+          .then(() => setPersons(persons.filter(person => person.id !== id)))
           .catch(error => {
               displayNotif(persons.find(person => person.id === id).name + ' not in database', true)
               setPersons(persons.filter(person => person.id !== id))
