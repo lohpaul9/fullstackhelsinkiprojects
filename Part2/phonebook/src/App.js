@@ -28,6 +28,9 @@ const App = () => {
               setPersons(response)
               return response
           })
+          .catch(error => {
+              console.log('sync error', error)
+          })
   }
 
   useEffect(serverSync, [])
@@ -36,7 +39,6 @@ const App = () => {
     const newPerson = {
       name: name, number: number
     }
-    console.log(newPerson)
     return (
         () => {
             personService
@@ -51,12 +53,12 @@ const App = () => {
                             setPersons(refreshedPeople)
                         })
                         .catch(error => {
-                            console.log(error, 'manually adding people offline')
                             setPersons(persons.concat(dbPerson))
                         })
                 })
                 .catch(error => {
-                    displayNotif(newPerson.name + ' already in phonebook', true)
+                    console.log(error)
+                    displayNotif(error.response.data.error, true)
                 })
 
         }
@@ -66,20 +68,22 @@ const App = () => {
   const updatePerson = (newPerson) => {
       personService
           .update(newPerson, newPerson.id)
-          //this should technically also sync to the new persons -> lessons learnt when re-buffering
           .then(() => {
+              displayNotif(newPerson.name + ' updated in phonebook', false)
               personService.getAll()
                   .then(refreshedPeople => {
                       setPersons(refreshedPeople)
                   })
                   .catch(error => {
                       console.log(error, 'manually adding people offline')
+                      displayNotif(error.response.data, true)
                       setPersons(persons.concat(newPerson))
                   })
           })
           .catch(error => {
-              displayNotif(newPerson.name + ' not in database', true)
-              // setPersons(persons.filter(person => person.id !== newPerson.id))
+              console.log(error)
+              displayNotif(error.response.data.error, true)
+              setPersons(persons.filter(person => person.id !== newPerson.id))
           })
   }
 

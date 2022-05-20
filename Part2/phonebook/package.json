@@ -22,12 +22,6 @@
     "server": "json-server -p3001 --watch db.json",
     "link:frontend": "npm run build && cp -r build ../../Part3/phonebookbackend"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",

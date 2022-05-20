@@ -79,49 +79,41 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
     const personObj = request.body
+    const contact = new Contact({
+        name : personObj.name,
+        number : personObj.number
+    })
+    contact.save()
+        .then(result => {
+            console.log(contact.name, '\n saved!')
+            response.status(200)
+            response.json(result)
+        })
+        .catch(error => {
+            console.log('error in saving a valid contact - passed to error handler')
+            next(error)
+        })
 
-    if (personObj.name && personObj.number) {
-        const contact = new Contact({
-            name : personObj.name,
-            number : personObj.number
-        })
-        contact.save()
-            .then(result => {
-                console.log(contact.name, '\n saved!')
-                response.status(200)
-                response.json(result)
-        })
-            .catch(error => {
-                console.log('error in saving a valid contact - passed to error handler')
-                next(error)
-            })
-    }
-    else {
-        response.status(400).json({error: 'name/number not defined'})
-    }
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
     const personObj = request.body
     const id = request.params.id
-    if (personObj.name && personObj.number) {
-        const contact = {
-            name : personObj.name,
-            number : personObj.number
-        }
-        Contact.findByIdAndUpdate(id, contact, {returnDocument : 'after'})
-            .then(servResponse => {
-                console.log(contact.name, '\n updated!')
-                response.status(200).json(servResponse)
-            })
-            .catch(error => {
-                console.log('error at updating using put - passed on to error handler')
-                next(error)
-            })
+    const contact = {
+        name : personObj.name,
+        number : personObj.number
     }
-    else {
-        response.status(400).json({error: 'name/number not defined'})
-    }
+    Contact.findByIdAndUpdate(id, contact, {returnDocument : 'after',
+        runValidators : true,
+        context: 'query'})
+        .then(servResponse => {
+            console.log(contact.name, '\n updated!')
+            response.status(200).json(servResponse)
+        })
+        .catch(error => {
+            console.log('error at updating using put - passed on to error handler')
+            next(error)
+        })
 })
 
 
@@ -134,12 +126,16 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
     console.log('error as defined: ')
-    console.error(error.message)
+    console.log(error.message)
     if (error.name === 'CastError') {
         response.status(400).json({error: 'malformatted id'})
     }
+    else if (error._message === 'person validation failed'){
+        console.log('repackaging internal server rejection errors')
+        response.status(500).send({error: error.message})
+    }
     else {
-        response.status(500).send({error: 'unspecified error - check console for more'})
+        next(error)
     }
 }
 
