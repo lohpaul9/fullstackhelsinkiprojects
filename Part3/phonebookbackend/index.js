@@ -126,13 +126,15 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
     console.log('error as defined: ')
+    console.log(error)
     console.log(error.message)
+    console.log('error name is ', error.name)
     if (error.name === 'CastError') {
         response.status(400).json({error: 'malformatted id'})
     }
-    else if (error._message === 'person validation failed'){
+    else if (error.name === 'ValidationError'){
         console.log('repackaging internal server rejection errors')
-        response.status(500).send({error: error.message})
+        response.status(400).send({error: error.message})
     }
     else {
         next(error)

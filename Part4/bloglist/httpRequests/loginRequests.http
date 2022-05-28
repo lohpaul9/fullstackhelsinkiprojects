@@ -1,0 +1,16 @@
+### Post login Single user correct
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "yo2",
+  "password": "pw2"
+}
+### Post login Single user wrong
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "yo2",
+  "password": "pw3"
+}

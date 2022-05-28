@@ -1,0 +1,42 @@
+### Get all blog
+GET http://localhost:3003/api/blogs
+Accept: application/json
+
+### Post Single blog with AuthToken
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InlvMiIsImlkIjoiNjI5MjIxNmE0NDc3ODhiODAwNjY1ZGIxIiwiaWF0IjoxNjUzNzQ4MjkwfQ.95TyjE6wDPdTEYZgSAe7ljr6-4pL8SyURLUvGNne5wI
+
+{
+  "title": "Blog3",
+  "author": "Author3",
+  "url": "exampleblog.com3",
+  "likes": 13
+}
+
+### Post Single blog with AuthToken 2nd user
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InlvMiIsImlkIjoiNjI5MjIxNmE0NDc3ODhiODAwNjY1ZGIxIiwiaWF0IjoxNjUzNzQzOTg4fQ.UfEcqcD3fY9NUx7eZl-09IC9sOYxkiVz13cweKP2O8A
+
+{
+  "title": "Blog2",
+  "author": "Author2",
+  "url": "exampleblog.com2",
+  "likes": 12
+}
+### Post Single blog with Wrong AuthToken
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InlvMiIsImlkIjoiNjI5MjIxNmE0NDc3ODhiODAwNjY1ZGIxIiwiaWF0IjoxNjUzNzQzOTg4fQ.UfEcqcD3fY9NUx7eZl-09IC9sOYxkiVz13cweKP2O8A
+
+{
+  "title": "Blog2",
+  "author": "Author2",
+  "url": "exampleblog.com2",
+  "likes": 12
+}
+### Delete single blog with auth
+DELETE http://localhost:3003/api/blogs/629233003ea6a0fbb9e9b0dd
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InlvMiIsImlkIjoiNjI5MjIxNmE0NDc3ODhiODAwNjY1ZGIxIiwiaWF0IjoxNjUzNzQ4MjkwfQ.95TyjE6wDPdTEYZgSAe7ljr6-4pL8SyURLUvGNne5wI
