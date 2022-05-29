@@ -12,6 +12,22 @@ blogRouter.get('/', async (request, response) => {
     await response.json(blogs)
 })
 
+blogRouter.put('/:id', async (request, response) => {
+    const newNote = request.body
+
+    const servResp = await Blog.findByIdAndUpdate(request.params.id, newNote, {
+        returnDocument: 'after',
+        runValidators : true,
+        context : 'query'
+    })
+
+    console.log('servResp ', servResp)
+
+    const toReturn = await servResp.populate('user', {name : 1, username: 1})
+
+    await response.status(200).json(toReturn)
+})
+
 blogRouter.use(middleware.userExtractor)
 
 blogRouter.post('/', async (request, response) => {
@@ -38,7 +54,6 @@ blogRouter.post('/', async (request, response) => {
     //returning blog
     const toReturn = await result.populate('user', {name : 1, username: 1})
     await response.status(201).json(toReturn)
-    console.log('posting result', toReturn)
 })
 
 blogRouter.delete('/:id', async (request, response) => {
@@ -70,20 +85,6 @@ blogRouter.delete('/:id', async (request, response) => {
     return response.status(204).end()
 })
 
-blogRouter.put('/:id', async (request, response) => {
-    const newNote = request.body
 
-    const servResp = await Blog.findByIdAndUpdate(request.params.id, newNote, {
-        returnDocument: 'after',
-        runValidators : true,
-        context : 'query'
-    })
-
-    console.log('servResp ', servResp)
-
-    const toReturn = await servResp.populate('user', {name : 1, username: 1})
-
-    await response.status(200).json(toReturn)
-})
 
 module.exports = blogRouter
